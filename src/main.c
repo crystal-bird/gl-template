@@ -19,7 +19,10 @@
 #define TEXTURE_FILE_PATH   "./textures/sky.png"
 #define TEXTURE_SMOOTH      true
 
-#define FRAGMENT_SHADER_PATH "./shaders/fragment.glsl"
+#define FRAGMENT_SHADER_PATH "./shaders/default.glsl"
+
+// How many times to draw per frame
+#define NUM_DRAW 1
 
 static int window_width     = WINDOW_WIDTH;
 static int window_height    = WINDOW_HEIGHT;
@@ -202,16 +205,18 @@ int main(void) {
         glClearBufferfv(GL_COLOR, 0, clear_color);
         glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 1);
 
-        // Set uniforms
-        glProgramUniform2f(fsh, u_resolution, (float) window_width, (float) window_height);
-        glProgramUniform1f(fsh, u_time, (float) glfwGetTime());
-        glProgramUniform2f(fsh, u_mouse, (float) mouse_x, (float) mouse_y);
-        glProgramUniform1i(fsh, u_tex, 0);
+        for (int i = 0; i < NUM_DRAW; i++) {
+            // Set uniforms
+            glProgramUniform2f(fsh, u_resolution, (float) window_width, (float) window_height);
+            glProgramUniform1f(fsh, u_time, (float) glfwGetTime());
+            glProgramUniform2f(fsh, u_mouse, (float) mouse_x, (float) mouse_y);
+            glProgramUniform1i(fsh, u_tex, 0);
 
-        // Bind texture
-        glBindTextureUnit(0, tex);
+            // Bind texture
+            glBindTextureUnit(0, tex);
 
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();

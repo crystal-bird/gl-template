@@ -19,6 +19,8 @@
 #define TEXTURE_FILE_PATH   "./textures/sky.png"
 #define TEXTURE_SMOOTH      true
 
+#define FRAGMENT_SHADER_PATH "./shaders/fragment.glsl"
+
 static int window_width     = WINDOW_WIDTH;
 static int window_height    = WINDOW_HEIGHT;
 
@@ -157,14 +159,28 @@ int main(void) {
     glCreateVertexArrays(1, &dummy_vao);
     glBindVertexArray(dummy_vao);
 
-    char* vsh_source = slurp_file_into_malloced_cstr("./shaders/vertex.glsl");
-    char* fsh_source = slurp_file_into_malloced_cstr("./shaders/fragment.glsl");
+    static const char* vsh_source =
+        "#version 460\n"
+
+        "layout(location = 0) out vec2 uv;"
+        
+        "out gl_PerVertex {"
+        "   vec4 gl_Position;"
+        "};"
+
+        "void main() {"
+        "   uv.x = (gl_VertexID & 1);"
+        "   uv.y = ((gl_VertexID >> 1) & 1);"
+        "   gl_Position = vec4(uv * 2.0 - 1.0, 0.0, 1.0);"
+        "}"
+    ;
+
+    char* fsh_source = slurp_file_into_malloced_cstr(FRAGMENT_SHADER_PATH);
 
     unsigned int vsh = glCreateShaderProgramv(GL_VERTEX_SHADER, 1, &vsh_source);
     unsigned int fsh = glCreateShaderProgramv(GL_FRAGMENT_SHADER, 1, &fsh_source);
 
     free(fsh_source);
-    free(vsh_source);
 
     unsigned int program_pipeline;
     glCreateProgramPipelines(1, &program_pipeline);

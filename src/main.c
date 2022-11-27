@@ -192,6 +192,7 @@ int main(void) {
     glBindProgramPipeline(program_pipeline);
 
     // Get uniform locations
+    unsigned int u_draw_index = glGetUniformLocation(fsh, "draw_index");
     unsigned int u_resolution = glGetUniformLocation(fsh, "resolution");
     unsigned int u_time = glGetUniformLocation(fsh, "time");
     unsigned int u_mouse = glGetUniformLocation(fsh, "mouse");
@@ -207,6 +208,7 @@ int main(void) {
 
         for (int i = 0; i < NUM_DRAW; i++) {
             // Set uniforms
+            glProgramUniform1i(fsh, u_draw_index, i);
             glProgramUniform2f(fsh, u_resolution, (float) window_width, (float) window_height);
             glProgramUniform1f(fsh, u_time, (float) glfwGetTime());
             glProgramUniform2f(fsh, u_mouse, (float) mouse_x, (float) mouse_y);
